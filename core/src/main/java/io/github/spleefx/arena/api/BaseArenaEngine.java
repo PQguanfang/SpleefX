@@ -580,6 +580,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      */
     @Override
     public void displayScoreboard(ArenaPlayer p) {
+        if (p == null) return;
         Player player = p.getPlayer();
         ScoreboardHolder scoreboard = arena.getExtension().getScoreboard().get(arena.stage);
         if (scoreboard == null || !scoreboard.isEnabled()) return;

@@ -21,7 +21,6 @@ import io.github.spleefx.arena.ArenaPlayer;
 import io.github.spleefx.data.GameStats;
 import io.github.spleefx.extension.ItemHolder;
 import io.github.spleefx.message.MessageKey;
-import io.github.spleefx.util.code.Printable;
 import io.github.spleefx.util.item.ItemFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
