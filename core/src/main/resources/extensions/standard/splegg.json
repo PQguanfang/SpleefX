@@ -383,7 +383,7 @@
         "4": "&7Need at least &e{arena_minimum} players",
         "3": "&eto start the game.",
         "2": "",
-        "1": "    www.example.com"
+        "1": "www.example.com"
       }
     },
     "COUNTDOWN": {
@@ -393,7 +393,7 @@
         "6": "&bThe game will",
         "5": "&bstart in &e{countdown} &bsecond{plural}",
         "4": "",
-        "3": "       www.example.com"
+        "3": "   www.example.com"
       }
     },
     "ACTIIVE": {
@@ -405,7 +405,7 @@
         "4": "",
         "3": "&eTime left: &7{arena_time_left}",
         "2": "",
-        "1": "       www.example.com"
+        "1": "   www.example.com"
       }
     }
   },

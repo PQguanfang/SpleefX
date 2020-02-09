@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 # SpleefX
 
 **Spigot Resource**: https://www.spigotmc.org/resources/73093/
@@ -7,3 +8,4 @@
 **SpleefX-SQL**: https://github.com/SpleefX/SpleefX-SQL
 
 **SpleefX-PAPI**: https://github.com/SpleefX/SpleefX-PAPI
+
