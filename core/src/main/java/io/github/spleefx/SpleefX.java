@@ -12,7 +12,6 @@ import io.github.spleefx.arena.splegg.SpleggListener;
 import io.github.spleefx.command.parent.*;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
 import io.github.spleefx.command.sub.base.ArenaSubcommand;
-import io.github.spleefx.command.sub.base.JoinGUISubcommand;
 import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.worldedit.SchematicProcessor;
@@ -29,6 +28,7 @@ import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.extension.ability.DoubleJumpHandler;
 import io.github.spleefx.extension.ability.GameAbility;
 import io.github.spleefx.extension.ability.TripleArrowsAbility;
+import io.github.spleefx.gui.JoinGUI.MenuSettings;
 import io.github.spleefx.gui.MessageGUI.ChatListener;
 import io.github.spleefx.listeners.ArenaListener;
 import io.github.spleefx.listeners.ConnectionListener;
@@ -206,7 +206,7 @@ public final class SpleefX extends JavaPlugin implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        joinGuiFile.register(JoinGUISubcommand.JoinMenu.class).associate();
+        joinGuiFile.register(MenuSettings.class).associate();
 
         List<Class<? extends GameArena>> arenaClasses = new ArrayList<>();
 
@@ -450,12 +450,13 @@ public final class SpleefX extends JavaPlugin implements Listener {
         pluginLogger = getLogger();
         if (!CompatibilityHandler.shouldDisable()) {
             File ext = new File(getDataFolder(), "extensions");
+            fileManager.createFile("config.yml");
             new ConfigConverter(new File(getDataFolder(), "config.yml")).run();
             new MessageFileConverter(new File(getDataFolder(), "messages.json")).run();
             new LegacyExtensionConverter(ext).run();
             new SpleefExtensionConverter(ext).run();
             new SpleggExtensionConverter(ext).run();
-            saveDefaultConfig();
+            //saveDefaultConfig();
             fileManager.createDirectory("extensions");
             fileManager.createDirectory("perks");
             fileManager.createDirectory("extensions" + separator + "custom");
