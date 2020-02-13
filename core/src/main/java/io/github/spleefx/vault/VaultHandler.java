@@ -44,10 +44,13 @@ public class VaultHandler {
             Economy e = new Economy_SpleefX(plugin.getDataProvider());
 
             RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                SpleefX.logger().info("No economy plugin found (other than SpleefX). Hooking");
+            }
             if (PluginSettings.ECO_HOOK_INTO_VAULT.get()) {
                 SpleefX.logger().info("SpleefX vault hook is enabled in the config. Hooking into vault");
                 Bukkit.getServicesManager().register(Economy.class, economy = e, vault, ServicePriority.Normal);
-            } else if (rsp.getProvider() == null && ((boolean) PluginSettings.ECO_USE_VAULT.get())) {
+            } else if (rsp == null || rsp.getProvider() == null && ((boolean) PluginSettings.ECO_USE_VAULT.get())) {
                 SpleefX.logger().warning("Vault hook is enabled, however no Vault-supported economy plugin is found. Defaulting to SpleefX economy.");
                 economy = e;
             } else {
