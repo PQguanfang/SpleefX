@@ -38,23 +38,23 @@ public class VaultHandler {
      * Registers the economy
      */
     public VaultHandler(SpleefX plugin) {
-        Plugin vault = Bukkit.getPluginManager().getPlugin("Vault");
-        if (vault != null) {
+        Plugin vaultPlugin = Bukkit.getPluginManager().getPlugin("Vault");
+        if (vaultPlugin != null) {
             SpleefX.logger().info("Vault found. Handling hooks...");
-            Economy e = new Economy_SpleefX(plugin.getDataProvider());
+            Economy spleefxEconomy = new Economy_SpleefX(plugin.getDataProvider());
 
-            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp == null) {
+            RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);
+            if (provider == null) {
                 SpleefX.logger().info("No economy plugin found (other than SpleefX). Hooking");
             }
             if (PluginSettings.ECO_HOOK_INTO_VAULT.get()) {
                 SpleefX.logger().info("SpleefX vault hook is enabled in the config. Hooking into vault");
-                Bukkit.getServicesManager().register(Economy.class, economy = e, vault, ServicePriority.Normal);
-            } else if (rsp == null || rsp.getProvider() == null && ((boolean) PluginSettings.ECO_USE_VAULT.get())) {
+                Bukkit.getServicesManager().register(Economy.class, economy = spleefxEconomy, vaultPlugin, ServicePriority.Normal);
+            } else if (provider == null || provider.getProvider() == null && ((boolean) PluginSettings.ECO_USE_VAULT.get())) {
                 SpleefX.logger().warning("Vault hook is enabled, however no Vault-supported economy plugin is found. Defaulting to SpleefX economy.");
-                economy = e;
+                economy = spleefxEconomy;
             } else {
-                economy = rsp.getProvider();
+                economy = provider.getProvider();
                 SpleefX.logger().warning("Using \"" + economy.getName() + "\" economy system.");
             }
         }
