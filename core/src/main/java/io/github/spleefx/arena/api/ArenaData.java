@@ -33,6 +33,7 @@ import io.github.spleefx.perk.GamePerk;
 import io.github.spleefx.perk.GamePerkAdapter;
 import io.github.spleefx.sign.BlockLocation;
 import io.github.spleefx.team.TeamColor;
+import io.github.spleefx.util.Percentage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -90,6 +91,7 @@ public abstract class ArenaData {
     public static final Gson GSON = new GsonBuilder()
             .disableHtmlEscaping()
             .registerTypeAdapter(TeamColor.class, TEAM_ADAPTER)
+            .registerTypeAdapter(Percentage.class, new Percentage.Adapter())
             .registerTypeAdapter(ActiveBoosterLoader.MAP_TYPE, ActiveBoosterLoader.ADAPTER)
             .registerTypeAdapter(TimeUnit.class, TIME_UNIT_ADAPTER)
             .registerTypeAdapter(Material.class, MATERIAL_ADAPTER)
