@@ -16,6 +16,7 @@
 package io.github.spleefx.extension.standard.spleef;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.extension.GameExtension;
 import io.github.spleefx.util.Percentage;
 
@@ -34,6 +35,7 @@ public class SpleefExtension extends GameExtension {
         private boolean removeSnowballsGraduallyOnMelting = true;
 
         @Expose
+        @JsonAdapter(Percentage.Adapter.class)
         private Percentage removalChance = new Percentage(50);
 
         @Expose
