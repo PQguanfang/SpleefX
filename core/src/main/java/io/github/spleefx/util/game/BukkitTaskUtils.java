@@ -57,7 +57,7 @@ public class BukkitTaskUtils {
      * @return Whether is the task cancelled or not
      */
     public static boolean isCancelled(BukkitTask task) {
-        return CompatibilityHandler.either(task::isCancelled, () -> getPeriod(task) == CANCELLED);
+        return CompatibilityHandler.either(() -> task.isCancelled(), () -> getPeriod(task) == CANCELLED);
     }
 
     static {
