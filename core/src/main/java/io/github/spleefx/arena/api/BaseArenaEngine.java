@@ -211,7 +211,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         GameTeam team = selectTeam();
         team.getMembers().add(player);
         playerTeams.put(p, team);
-        //playerCount.set(playerCount.get() + 1);
         prepare(p, team);
         if (arena.getArenaType() == ArenaType.TEAMS)
             playerTeams.forEach((pl, r) -> MessageKey.PLAYER_JOINED_T.send(pl.getPlayer(), arena, team.getColor(), null, player, null,

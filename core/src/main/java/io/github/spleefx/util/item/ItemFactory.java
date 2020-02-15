@@ -2,6 +2,7 @@ package io.github.spleefx.util.item;
 
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.compatibility.CompatibilityHandler;
+import io.github.spleefx.util.game.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -237,6 +238,7 @@ public class ItemFactory {
      */
     public ItemFactory addLoreLine(String line, int pos) {
         if (line == null) return this;
+        line = Chat.colorize(line);
         List<String> lore = new ArrayList<>(im.getLore());
         lore.set(pos, line);
         im.setLore(lore);

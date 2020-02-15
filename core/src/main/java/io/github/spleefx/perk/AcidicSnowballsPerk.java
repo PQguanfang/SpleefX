@@ -40,6 +40,7 @@ import java.util.Set;
 /**
  * A snowball that removes blocks it gets shoot in
  */
+@SuppressWarnings("Convert2MethodRef")
 public class AcidicSnowballsPerk extends GamePerk implements Listener {
 
     private static final String METADATA = "acidic_snowball";
@@ -61,6 +62,7 @@ public class AcidicSnowballsPerk extends GamePerk implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
+        if (!e.hasItem()) return;
         Player p = e.getPlayer();
         ArenaPlayer player = ArenaPlayer.adapt(e.getPlayer());
 
@@ -69,7 +71,7 @@ public class AcidicSnowballsPerk extends GamePerk implements Listener {
         if (arena == null) return;
         if (arena.getEngine().getArenaStage() != ArenaStage.ACTIVE) return;
         if (!canUse(player.getCurrentArena().getExtension())) return;
-        if (!p.getInventory().getItemInMainHand().isSimilar(projectileItem.factory().create())) return;
+        if (!CompatibilityHandler.either(() -> p.getInventory().getItemInMainHand(), () -> p.getItemInHand()).isSimilar(projectileItem.factory().create())) return;
         onActivate(player);
         e.setCancelled(true);
     }
@@ -93,7 +95,7 @@ public class AcidicSnowballsPerk extends GamePerk implements Listener {
     @Override
     public void onActivate(ArenaPlayer player) {
         Player p = player.getPlayer();
-        ItemStack m = p.getInventory().getItemInMainHand();
+        ItemStack m = CompatibilityHandler.either(() -> p.getInventory().getItemInMainHand(), () -> p.getItemInHand());
         m.setAmount(m.getAmount() - 1);
         Projectile projectile = p.launchProjectile(projectileType.getProjectileClass());
         Metas.set(projectile, METADATA, player);

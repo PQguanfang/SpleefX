@@ -59,6 +59,10 @@ public class Button {
         return slot;
     }
 
+    public void setItem(ItemStack item) {
+        this.item = item;
+    }
+
     public Button addAction(Consumer<InventoryClickEvent> action) {
         onClick.add(action);
         return this;

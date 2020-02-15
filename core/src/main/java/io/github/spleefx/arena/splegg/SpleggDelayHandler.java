@@ -27,7 +27,6 @@ import java.util.UUID;
 
 public class SpleggDelayHandler {
 
-
     private boolean started;
 
     private BukkitTask delayTask;

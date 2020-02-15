@@ -11,7 +11,6 @@ import io.github.spleefx.arena.bow.BowSpleefListener;
 import io.github.spleefx.arena.splegg.SpleggListener;
 import io.github.spleefx.command.parent.*;
 import io.github.spleefx.command.plugin.PluginCommandBuilder;
-import io.github.spleefx.command.sub.base.ArenaSubcommand;
 import io.github.spleefx.command.sub.base.StatsCommand.MenuListener;
 import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.compatibility.worldedit.SchematicProcessor;
@@ -262,7 +261,6 @@ public final class SpleefX extends JavaPlugin implements Listener {
         final PluginManager p = Bukkit.getPluginManager();
         MessageKey.load(false);
 
-        p.registerEvents(new ArenaSubcommand.MenuListener(), this);
         p.registerEvents(new ChatListener(), this);
         p.registerEvents(new io.github.spleefx.util.menu.MenuListener(), this);
         p.registerEvents(new TripleArrowsAbility(abilityDelays), this);

@@ -31,12 +31,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.util.*;
 
 import static io.github.spleefx.arena.bow.BowSpleefEngine.ARROW_METADATA;
+import static io.github.spleefx.compatibility.CompatibilityHandler.either;
 import static io.github.spleefx.extension.standard.bowspleef.BowSpleefExtension.EXTENSION;
 
 public class TripleArrowsAbility implements Listener {
@@ -58,7 +60,7 @@ public class TripleArrowsAbility implements Listener {
         if (player.getCurrentArena() == null || player.getCurrentArena().type != ModeType.BOW_SPLEEF) return;
         BowSpleefArena arena = player.getCurrentArena();
         Settings settings = EXTENSION.getTripleArrows();
-        if (settings.getRequiredMaterials().contains(event.getPlayer().getInventory().getItemInMainHand().getType()))
+        if (settings.getRequiredMaterials().contains(either(() -> event.getPlayer().getInventory().getItemInMainHand(), () -> event.getPlayer().getItemInHand()).getType()))
             launchTripleArrowsIfPossible(player.getPlayer(), arena);
     }
 
@@ -67,8 +69,9 @@ public class TripleArrowsAbility implements Listener {
         if (delayExecutor.hasDelay(player, GameAbility.TRIPLE_ARROWS)) return;
         if (arena.getEngine().getAbilityCount().get(player.getUniqueId()).getOrDefault(GameAbility.TRIPLE_ARROWS, 0) <= 0)
             return; // Player has no more double jumps
-        boolean flame = player.getInventory().getItemInMainHand().getType().name().contains("BOW") &&
-                player.getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchants.get("flame"));
+        ItemStack mainHand = either(() -> player.getInventory().getItemInMainHand(), () -> player.getItemInHand());
+        boolean flame = mainHand.getType().name().contains("BOW") &&
+                mainHand.getItemMeta().hasEnchant(Enchants.get("flame"));
         FixedMetadataValue v = new FixedMetadataValue(SpleefX.getPlugin(), arena);
         Arrow first = player.launchProjectile(Arrow.class);
         Metas.set(first, ARROW_METADATA, v);

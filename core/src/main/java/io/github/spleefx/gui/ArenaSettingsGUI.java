@@ -19,6 +19,7 @@ import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.arena.spleef.SpleefArena;
 import io.github.spleefx.extension.standard.spleef.SpleefExtension;
+import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.Metas;
@@ -31,6 +32,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -74,7 +76,7 @@ public class ArenaSettingsGUI extends GameMenu {
 
         createNumberButtons(1, arena.getGameTime(), 29, 47, arena::setGameTime, new Button(38, Items.GAME_TIME));
 
-        createNumberButtons(1, arena.getMinimum(), 30, 48, arena::setMinimum, new Button(39, Items.MINIMUM));
+        createNumberButtons(2, arena.getMinimum(), 30, 48, arena::setMinimum, new Button(39, Items.MINIMUM));
 
         createBooleanButtons(arena.getDropMinedBlocks(), 42, arena::setDropMinedBlocks, new Button(33, Items.DROP_MINED_BLOCKS));
         if (arena.getExtension() instanceof SpleefExtension)
@@ -111,9 +113,19 @@ public class ArenaSettingsGUI extends GameMenu {
                 .setName("&cDecrease").create();
         NumberIncreaseButton increase = new NumberIncreaseButton(slotInc, binder, incItem);
         NumberDecreaseButton decrease = new NumberDecreaseButton(slotDec, binder, decItem);
-        increase.register(incItem, decrease, (e, v) -> valueChange.accept(v));
-        decrease.register(minimum, increase, decItem, (e, v) -> valueChange.accept(v));
+        increase.register(incItem, decrease, (e, v) -> {
+            valueChange.accept(v);
+            e.getClickedInventory().setItem(itemButton.getSlot(), ItemFactory.create(itemButton.getItem().clone())
+                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), 2).create());
+        });
+        decrease.register(minimum, increase, decItem, (e, v) -> {
+            valueChange.accept(v);
+            e.getClickedInventory().setItem(itemButton.getSlot(), ItemFactory.create(itemButton.getItem().clone())
+                    .addLoreLine("&bCurrent value: &d" + binder.getValue(), 2).create());
+        });
         itemButton.addAction(e -> Chat.plugin(e.getWhoClicked(), "&eCurrent value: &d" + binder.getValue()));
+        itemButton.setItem(ItemFactory.create(itemButton.getItem().clone()).addLoreLine("")
+                .addLoreLine("&bCurrent value: &d" + binder.getValue()).create());
         setButton(increase).setButton(decrease).setButton(itemButton);
     }
 
@@ -123,9 +135,12 @@ public class ArenaSettingsGUI extends GameMenu {
     }
 
     private void team(boolean add, GameArena arena, TeamColor color) {
-        if (add)
+        if (add) {
             arena.getTeams().add(color);
-        else
+            arena.gameTeams.add(new GameTeam(color, new ArrayList<>()));
+        } else {
             arena.getTeams().remove(color);
+            arena.gameTeams.removeIf(gameTeam -> gameTeam.getColor() == color);
+        }
     }
 }

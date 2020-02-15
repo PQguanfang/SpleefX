@@ -16,6 +16,7 @@
 package io.github.spleefx.arena.spleef;
 
 import io.github.spleefx.arena.ArenaPlayer;
+import io.github.spleefx.compatibility.CompatibilityHandler;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,6 +32,6 @@ public class SpleefListener implements Listener {
         Player p = (Player) event.getEntity().getShooter();
         ArenaPlayer player = ArenaPlayer.adapt(p);
         if (player.getCurrentArena() instanceof SpleefArena)
-            event.setCancelled(!p.getInventory().getItemInMainHand().hasItemMeta() && SpleefArena.EXTENSION.getSnowballSettings().getAllowThrowing());
+            event.setCancelled(!CompatibilityHandler.either(() -> p.getInventory().getItemInMainHand(), () -> p.getItemInHand()).hasItemMeta() && SpleefArena.EXTENSION.getSnowballSettings().getAllowThrowing());
     }
 }

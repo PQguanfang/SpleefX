@@ -16,36 +16,26 @@
 package io.github.spleefx.command.sub.base;
 
 import io.github.spleefx.SpleefX;
-import io.github.spleefx.gui.ArenaSettingsGUI;
 import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.api.ArenaData;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.FFAManager;
 import io.github.spleefx.arena.api.GameArena;
-import io.github.spleefx.arena.spleef.SpleefArena;
 import io.github.spleefx.command.sub.PluginSubcommand;
 import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.listeners.RenameListener;
+import io.github.spleefx.gui.ArenaSettingsGUI;
 import io.github.spleefx.message.MessageKey;
 import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
 import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.Metas;
 import io.github.spleefx.util.io.CopyStore;
-import io.github.spleefx.util.item.Items;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.Permission;
 
@@ -390,55 +380,6 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
         return false;
     }
 
-    protected static void controlTeam(TeamColor team, int slot, ItemStack clicked, Inventory inventory, GameArena arena) {
-        if (arena.getArenaType() != ArenaType.TEAMS) return;
-        if (clicked.getType() == Items.ADD_TEAM.getType()) {
-            inventory.setItem(slot, Items.REMOVE_TEAM);
-            arena.addTeam(team);
-            arena.gameTeams.add(new GameTeam(team, new ArrayList<>()));
-        } else {
-            inventory.setItem(slot, Items.ADD_TEAM);
-            arena.removeTeam(team);
-            arena.gameTeams.removeIf(gameTeam -> gameTeam.getColor() == team);
-        }
-    }
-
-    protected static boolean toggle(int slot, ItemStack clicked, Inventory inventory) {
-        if (clicked.getType() == Items.ENABLE.getType()) {
-            inventory.setItem(slot, Items.DISABLE);
-            return true;
-        } else {
-            inventory.setItem(slot, Items.ENABLE);
-            return false;
-        }
-    }
-
-    protected static int increase(int original, InventoryClickEvent event) {
-        int add = event.getClick() == ClickType.MIDDLE ? 5 : 1;
-        int c = original + add;
-        if (event.getCurrentItem() != null) {
-            event.getCurrentItem().setAmount(c);
-            event.getInventory().getItem(event.getRawSlot() + 18).setAmount(c);
-        }
-        return c;
-    }
-
-    protected static int decrease(int original, InventoryClickEvent event, int minimum) {
-        int v = event.getClick() == ClickType.MIDDLE ? 5 : 1;
-        int c = original;
-        if (c - v <= minimum) {
-            event.getCurrentItem().setAmount(minimum);
-            event.getClickedInventory().getItem(event.getRawSlot() - 18).setAmount(minimum);
-            return minimum;
-        }
-        c -= v;
-        if (event.getCurrentItem() != null) {
-            event.getCurrentItem().setAmount(c);
-            event.getClickedInventory().getItem(event.getRawSlot() - 18).setAmount(c);
-        }
-        return c;
-    }
-
     protected static void value(GameArena arena, HumanEntity entity, int e) {
         Chat.prefix(entity, arena, "&eCurrent value: &a" + e);
     }
@@ -453,124 +394,6 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
             then.accept(arena, v);
         } catch (NumberFormatException e) {
             Chat.prefix(sender, arena, "&cInvalid number: &e" + toParse);
-        }
-    }
-
-    public static class MenuListener implements Listener {
-
-        @EventHandler
-        public void onInventoryClick(InventoryClickEvent event) {
-            if (event.getView().getTitle().endsWith(" - Settings"))
-                if (event.getWhoClicked().hasMetadata("spleefx.editing")) {
-                    event.setCancelled(true);
-                    if (event.getCurrentItem() == null) return;
-                    GameArena arena = Metas.get(event.getWhoClicked(), "spleefx.editing");
-                    if (arena == null) return;
-                    switch (event.getRawSlot()) {
-                        case 9:
-                            controlTeam(TeamColor.RED, 9, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 10:
-                            controlTeam(TeamColor.GREEN, 10, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 11:
-                            controlTeam(TeamColor.BLUE, 11, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 12:
-                            controlTeam(TeamColor.YELLOW, 12, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 13:
-                            controlTeam(TeamColor.PINK, 13, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 14:
-                            controlTeam(TeamColor.GRAY, 14, event.getCurrentItem(), event.getClickedInventory(), arena);
-                            break;
-                        case 16:
-                            event.getWhoClicked().closeInventory();
-                            Metas.set(event.getWhoClicked(), "spleefx.renaming", new FixedMetadataValue(SpleefX.getPlugin(), arena));
-                            Chat.plugin(event.getWhoClicked(), "&eType the new &ddisplay name &eof arena &d" + arena.getKey());
-                            Chat.plugin(event.getWhoClicked(), "&eTo cancel, type &d" + RenameListener.CANCEL + "&e.");
-                            break;
-
-                        case 27:
-                            arena.setDeathLevel(increase(arena.getDeathLevel(), event));
-                            break;
-                        case 28:
-                            if (arena.getArenaType() == ArenaType.TEAMS)
-                                arena.setMembersPerTeam(increase(arena.getMembersPerTeam(), event));
-                            else
-                                arena.setMaxPlayerCount(increase(arena.getMaxPlayerCount(), event));
-                            break;
-                        case 29:
-                            arena.setGameTime(increase(arena.getGameTime(), event));
-                            break;
-                        case 30:
-                            arena.setMinimum(increase(arena.getMinimum(), event));
-                            break;
-                        case 36:
-                            value(arena, event.getWhoClicked(), arena.getDeathLevel());
-                            break;
-                        case 37:
-                            value(arena, event.getWhoClicked(), arena.getArenaType() == ArenaType.TEAMS ? arena.getMembersPerTeam() : arena.getMaxPlayerCount());
-                            break;
-                        case 38:
-                            value(arena, event.getWhoClicked(), arena.getGameTime());
-                            break;
-                        case 39:
-                            value(arena, event.getWhoClicked(), arena.getMinimum());
-                            break;
-/*
-
-                        case 42:
-                            arena.setPowerups(toggle(event.getRawSlot(), event.getCurrentItem(), event.getClickedInventory()));
-                            break;
-*/
-
-                        case 42:
-                            arena.setDropMinedBlocks(toggle(event.getRawSlot(), event.getCurrentItem(), event.getClickedInventory()));
-                            break;
-
-                        case 43: {
-                            if (arena.type == ModeType.SPLEEF)
-                                ((SpleefArena) arena).setMelt(toggle(event.getRawSlot(), event.getCurrentItem(), event.getClickedInventory()));
-                        }
-                        break;
-
-                        case 45:
-                            arena.setDeathLevel(decrease(arena.getDeathLevel(), event, 1));
-                            break;
-                        case 46:
-                            if (arena.getArenaType() == ArenaType.TEAMS)
-                                arena.setMembersPerTeam(decrease(arena.getMembersPerTeam(), event, 1));
-                            else
-                                arena.setMaxPlayerCount(decrease(arena.getMaxPlayerCount(), event, 2));
-                            break;
-                        case 47:
-                            arena.setGameTime(decrease(arena.getGameTime(), event, 1));
-                            break;
-                        case 48:
-                            arena.setMinimum(decrease(arena.getMinimum(), event, 2));
-                            break;
-
-                        case 53:
-                            event.getWhoClicked().closeInventory();
-                            MessageKey.ARENA_DELETING.send(event.getWhoClicked(), arena, null, null, null, null,
-                                    null, -1, arena.getExtension());
-                            try {
-                                SpleefX.getPlugin().getArenaManager().removeArena(arena.getKey());
-                                MessageKey.ARENA_DELETED.send(event.getWhoClicked(), arena, null, null, null, null,
-                                        null, -1, arena.getExtension());
-                            } catch (IllegalStateException e) {
-                                Chat.plugin(event.getWhoClicked(), "&c" + e.getMessage());
-                            }
-                            break;
-                    }
-                }
-        }
-
-        @EventHandler
-        public void onInventoryClose(InventoryCloseEvent event) {
-            event.getPlayer().removeMetadata("spleefx.editing", SpleefX.getPlugin());
         }
     }
 

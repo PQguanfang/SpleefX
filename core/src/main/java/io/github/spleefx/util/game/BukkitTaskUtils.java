@@ -15,7 +15,6 @@
  */
 package io.github.spleefx.util.game;
 
-import io.github.spleefx.compatibility.CompatibilityHandler;
 import io.github.spleefx.util.plugin.Protocol;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -57,12 +56,17 @@ public class BukkitTaskUtils {
      * @return Whether is the task cancelled or not
      */
     public static boolean isCancelled(BukkitTask task) {
-        return CompatibilityHandler.either(() -> task.isCancelled(), () -> getPeriod(task) == CANCELLED);
+        if (task == null) return true;
+        try {
+            return task.isCancelled();
+        } catch (NoSuchMethodError e) {
+            return getPeriod(task) == CANCELLED;
+        }
     }
 
     static {
         try {
-            Class craftTask = Class.forName("org.bukkit.craftbukkit." + Protocol.VERSION + ".scheduler.CraftTask");
+            Class<?> craftTask = Protocol.getCraftBukkitClass("scheduler.CraftTask");
             periodField = craftTask.getDeclaredField("period");
             periodField.setAccessible(true);
         } catch (ReflectiveOperationException e) {

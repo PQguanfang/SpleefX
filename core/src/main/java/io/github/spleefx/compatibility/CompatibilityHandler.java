@@ -203,7 +203,7 @@ public class CompatibilityHandler {
      */
     public static Block getHitBlock(GameArena arena, ProjectileHitEvent event) {
         if (getHitEntity(arena, event) != null) return null; // No block, an entity was hit
-        return either(event::getHitBlock, () -> {
+        return either(() -> event.getHitBlock(), () -> {
             BlockIterator iterator = new BlockIterator(event.getEntity().getWorld(), event.getEntity().getLocation().toVector(), event.getEntity().getVelocity().normalize(), 0.0D, 4);
             Block hitBlock = null;
             while (iterator.hasNext()) {
@@ -225,7 +225,7 @@ public class CompatibilityHandler {
      */
     public static Entity getHitEntity(GameArena arena, ProjectileHitEvent event) {
         if (arena == null) return null;
-        return either(event::getHitEntity, () -> {
+        return either(() -> event.getHitEntity(), () -> {
             if (arena instanceof SpleggArena)
                 return ((SpleggArena) arena).getDamageMap().get(event.getEntity().getUniqueId());
             else if (arena instanceof BowSpleefArena)

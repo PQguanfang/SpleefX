@@ -58,6 +58,7 @@ public class SpleggListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!event.hasItem()) return;
         ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
         if (player.getState() != ArenaPlayerState.IN_GAME) return;
         GameArena arena = player.getCurrentArena();

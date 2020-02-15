@@ -55,7 +55,7 @@ public class VaultHandler {
                 economy = spleefxEconomy;
             } else {
                 economy = provider.getProvider();
-                SpleefX.logger().warning("Using \"" + economy.getName() + "\" economy system.");
+                SpleefX.logger().info("Using \"" + economy.getName() + "\" economy system.");
             }
         }
     }
@@ -72,4 +72,7 @@ public class VaultHandler {
         economy.withdrawPlayer(player, amount);
     }
 
+    public Economy getEconomy() {
+        return economy;
+    }
 }
