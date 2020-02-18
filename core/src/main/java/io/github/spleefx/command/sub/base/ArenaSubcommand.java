@@ -228,20 +228,19 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             case "toggle":
                                 arena.setEnabled(!arena.isEnabled());
                                 Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
-                                break;
+                                return true;
                             case "enable":
                                 arena.setEnabled(true);
                                 Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
-                                break;
+                                return true;
                             case "disable":
                                 arena.setEnabled(false);
                                 Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
-                                break;
+                                return true;
+
                         }
 
                     }
-
-                    return false;
                     case "create": {
                         if (checkSender(sender)) {
                             MessageKey.NOT_PLAYER.send(sender, null, null, null, null, command.getName(),
