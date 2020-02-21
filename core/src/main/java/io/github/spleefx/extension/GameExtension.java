@@ -291,12 +291,13 @@ public class GameExtension {
     public enum SenderType {
         PLAYER {
             @Override public void run(Player player, String command) {
-                player.performCommand(command.replace("{winner}", player.getName()));
+                player.performCommand(command.replace("{winner}", player.getName()).replace("{player}", player.getName()));
             }
         },
         CONSOLE {
             @Override public void run(Player player, String command) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName()));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{winner}", player.getName())
+                        .replace("{player}", player.getName()));
             }
         };
 
