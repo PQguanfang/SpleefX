@@ -60,11 +60,11 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
 
     private static final List<String> TEAMS = Arrays.stream(TeamColor.values()).filter(TeamColor::isUsable).map(c -> c.name().toLowerCase()).collect(Collectors.toList());
 
-    public static final List<String> ARGS_1 = Arrays.asList("create", "lobby", "remove", "removelobby", "settings", "spawnpoint", "regenerate");
+    public static final List<String> ARGS_1 = Arrays.asList("create", "lobby", "regenerate", "remove", "removelobby", "settings", "spawnpoint");
 
     public static final List<String> TYPES = Arrays.asList("ffa", "teams");
 
-    private static final List<String> SETTINGS = Arrays.asList("deathLevel", "teams", "displayName", "membersPerTeam", "gameTime", "minimum", "maxPlayerCount", "toggle", "enable", "disable");
+    private static final List<String> SETTINGS = Arrays.asList("deathLevel", "disable", "displayName", "enable", "gameTime", "maxPlayerCount", "membersPerTeam", "minimum", "teams", "toggle");
 
     private ModeType type;
 
