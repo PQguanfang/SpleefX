@@ -64,7 +64,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
 
     public static final List<String> TYPES = Arrays.asList("ffa", "teams");
 
-    private static final List<String> SETTINGS = Arrays.asList("deathLevel", "teams", "displayName", "membersPerTeam", "gameTime", "minimum", "maxPlayerCount");
+    private static final List<String> SETTINGS = Arrays.asList("deathLevel", "teams", "displayName", "membersPerTeam", "gameTime", "minimum", "maxPlayerCount", "toggle", "enable", "disable");
 
     private ModeType type;
 
@@ -227,17 +227,16 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                         switch (args[2].toLowerCase()) {
                             case "toggle":
                                 arena.setEnabled(!arena.isEnabled());
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
                                 return true;
                             case "enable":
                                 arena.setEnabled(true);
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
                                 return true;
                             case "disable":
                                 arena.setEnabled(false);
-                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &ahas been disabled"), arena.getKey()));
+                                Chat.prefix(sender, arena, String.format((arena.isEnabled() ? "&aArena &e%s &ahas been enabled" : "&cArena &e%s &chas been disabled"), arena.getKey()));
                                 return true;
-
                         }
 
                     }
