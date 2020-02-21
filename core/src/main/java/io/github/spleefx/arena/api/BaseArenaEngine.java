@@ -235,7 +235,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
 
     private static boolean containsItems(Inventory inventory) {
         //noinspection ConstantConditions like bro you're wrong
-        return Arrays.stream(inventory.getContents()).anyMatch(Objects::nonNull);
+        return Arrays.stream(inventory.getStorageContents()).anyMatch(Objects::nonNull);
     }
 
     /**
