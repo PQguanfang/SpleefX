@@ -40,6 +40,7 @@ import io.github.spleefx.util.plugin.PluginSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -184,6 +185,11 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     -1, arena.getExtension());
             return false;
         }
+        if (containsItems(player.getInventory()) && (boolean) ARENA_REQUIRE_EMPTY_INV.get()) {
+            MessageKey.MUST_HAVE_EMPTY_INV.send(player, arena, null, null, player, null, null,
+                    -1, arena.getExtension());
+            return false;
+        }
         if (isFull()) {
             MessageKey.ARENA_FULL.send(player, arena, null, null, player, null, null,
                     -1, arena.getExtension());
@@ -225,6 +231,11 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                 MapBuilder.of(new EnumMap<GameAbility, Integer>(GameAbility.class))
                         .put(GameAbility.DOUBLE_JUMP, arena.getExtension().getDoubleJumpSettings().getDefaultAmount()).build());
         return true;
+    }
+
+    private static boolean containsItems(Inventory inventory) {
+        //noinspection ConstantConditions like bro you're wrong
+        return Arrays.stream(inventory.getContents()).anyMatch(Objects::nonNull);
     }
 
     /**

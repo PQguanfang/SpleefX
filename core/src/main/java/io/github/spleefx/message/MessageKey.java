@@ -76,6 +76,7 @@ public enum MessageKey {
     ARENA_ALREADY_ACTIVE("arenaAlreadyActive", MessageCategory.ARENA, "Arena active", "Sent when a pleyer attempts to join an active arena"),
     ARENA_FULL("arenaFull", MessageCategory.ARENA, "Arena full", "Sent when a pleyer attempts to join a full arena"),
     ARENA_DISABLED("arenaDisabled", MessageCategory.ARENA, "Arena disabled", "Sent when a player attempts to join a disabled arena"),
+    MUST_HAVE_EMPTY_INV("mustHaveEmptyInventory", MessageCategory.ARENA, "Must have an empty inventory", "Sent when a player attempts to join with a non-empty inventory when it is required."),
     ARENA_ALREADY_EXISTS("arenaAlreadyExists", MessageCategory.ARENA, "Arena already exists", "Sent when attempting to create an arena with an existing key"),
     INVALID_ARENA("invalidArena", MessageCategory.ARENA, "Invalid arena", "Sent when the requested arena is invalid"),
     SERVER_STOPPED("serverStopped", MessageCategory.ARENA, "Server stopped", "Sent to in-game players when the server stops"),

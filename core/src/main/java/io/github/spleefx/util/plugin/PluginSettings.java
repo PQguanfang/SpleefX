@@ -20,6 +20,7 @@ public enum PluginSettings {
 
     ARENA_UPDATE_INTERVAL("Arena.LoopUpdateInterval", 20),
     ARENA_CANCEL_TEAM_DAMAGE("Arena.CancelTeamDamage", true),
+    ARENA_REQUIRE_EMPTY_INV("Arena.RequireEmptyInventoryBeforeJoining", false),
     ARENA_MELTING_RADIUS("Arena.Melting.Radius", 5),
     ARENA_MELTING_INTERVAL("Arena.Melting.Interval", 100),
     ARENA_MELTING_IGNORE_Y("Arena.Melting.IgnoreY", true),

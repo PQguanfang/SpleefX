@@ -70,9 +70,16 @@ public class MessageFileConverter implements Runnable {
         boolean changed = false;
         if (!messagesFile.contains("economy")) {
             messagesFile.set("economy", ECO);
+            changed = true;
         }
         if (!messagesFile.contains("splegg_upgrades")) {
             messagesFile.set("splegg_upgrades", SPLEGG);
+            changed = true;
+        }
+        Map<String, Object> arenaMessages = messagesFile.getMap("arena");
+        if (arenaMessages.putIfAbsent("mustHaveEmptyInventory", "&cYou must have an empty inventory in order to join!") == null) {
+            changed = true;
+            messagesFile.set("arena", arenaMessages);
         }
         if (changed) {
             messagesFile.save(Throwable::printStackTrace);

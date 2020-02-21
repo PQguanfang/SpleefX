@@ -26,6 +26,7 @@
     "arenaFull": "&cThis arena is full!",
     "arenaAlreadyExists": "&cAn arena with the key &e{arena} &calready exists! Remove it with &e/spleef arena remove {arena}&c.",
     "arenaDisabled": "&cThis arena is disabled",
+    "mustHaveEmptyInventory": "&cYou must have an empty inventory in order to join!",
     "gameCountdown": "&aGame starting in &e{countdown} &asecond{plural}",
     "gameTimeout": "&7The game ends in {countdown} &7second{plural}",
     "arenaRegenerating": "&cPlease wait while this arena regenerates.",

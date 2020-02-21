@@ -52,6 +52,11 @@ Arena:
   # Default value: true
   CancelTeamDamage: true
 
+  # Whether should players be required to have an empty inventory before joining the arena
+  #
+  # Default value: false
+  RequireEmptyInventoryBeforeJoining: false
+
   # Spleef melting settings
   Melting:
 
