@@ -47,9 +47,12 @@ public class BowSpleefEngine extends BaseArenaEngine<BowSpleefArena> {
      * @param p Player to join
      */
     @Override
-    public void join(ArenaPlayer p) {
-        super.join(p);
-        abilityCount.get(p.getPlayer().getUniqueId()).put(GameAbility.TRIPLE_ARROWS, EXTENSION.getTripleArrows().getDefaultAmount());
+    public boolean join(ArenaPlayer p) {
+        if (super.join(p)) {
+            abilityCount.get(p.getPlayer().getUniqueId()).put(GameAbility.TRIPLE_ARROWS, EXTENSION.getTripleArrows().getDefaultAmount());
+            return true;
+        }
+        return false;
     }
 
     /**

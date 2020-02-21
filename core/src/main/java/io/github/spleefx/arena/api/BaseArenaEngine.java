@@ -177,37 +177,37 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      * @param p Player to join
      */
     @Override
-    public void join(ArenaPlayer p) {
+    public boolean join(ArenaPlayer p) {
         Player player = p.getPlayer();
         if (!arena.isEnabled() || !arena.getExtension().isEnabled()) {
             MessageKey.ARENA_DISABLED.send(player, arena, null, null, player, null, null,
                     -1, arena.getExtension());
-            return;
+            return false;
         }
         if (isFull()) {
             MessageKey.ARENA_FULL.send(player, arena, null, null, player, null, null,
                     -1, arena.getExtension());
-            return;
+            return false;
         }
         switch (arena.getEngine().getArenaStage()) {
             case DISABLED:
                 MessageKey.ARENA_DISABLED.send(player, arena, null, null, player, null, null,
                         -1, arena.getExtension());
-                return;
+                return false;
             case ACTIVE:
                 MessageKey.ARENA_ALREADY_ACTIVE.send(player, arena, null, null, player, null, null,
                         -1, arena.getExtension());
-                return;
+                return false;
             case REGENERATING:
                 MessageKey.ARENA_REGENERATING.send(player, arena, null, null, player, null, null,
                         -1, arena.getExtension());
-                return;
+                return false;
             case NEEDS_SETUP:
                 MessageKey.ARENA_NEEDS_SETUP.send(player, arena, null, null, player, null, null,
                         -1, arena.getExtension());
-                return;
+                return false;
         }
-        if (playerTeams.containsKey(p)) return;
+        if (playerTeams.containsKey(p)) return false;
         GameTeam team = selectTeam();
         team.getMembers().add(player);
         playerTeams.put(p, team);
@@ -224,6 +224,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         abilityCount.put(player.getUniqueId(), (EnumMap<GameAbility, Integer>)
                 MapBuilder.of(new EnumMap<GameAbility, Integer>(GameAbility.class))
                         .put(GameAbility.DOUBLE_JUMP, arena.getExtension().getDoubleJumpSettings().getDefaultAmount()).build());
+        return true;
     }
 
     /**
@@ -457,7 +458,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                 timeLeft--;
                 String m = numbers.get(Integer.toString(timeLeft));
                 playerTeams.forEach((p, team) -> {
-                    displayScoreboard(p);
                     if (m != null)
                         MessageKey.GAME_TIMEOUT.send(p.getPlayer(), arena, team.getColor(), null, p.getPlayer(), null, m, timeLeft, arena.getExtension());
                 });
@@ -583,7 +583,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         Player player = p.getPlayer();
         ScoreboardHolder scoreboard = arena.getExtension().getScoreboard().get(arena.stage);
         if (scoreboard == null || !scoreboard.isEnabled()) return;
-        scoreboard.scoreboard(ArenaPlayer.adapt(player), getScoreboardMap(player))
+        scoreboard.scoreboard(ArenaPlayer.adapt(player), getScoreboardMap(player), arena)
                 .ifPresent(s -> {
                     s.build();
                     player.setScoreboard(s.getScoreboard());

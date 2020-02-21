@@ -57,7 +57,7 @@ public interface ArenaEngine {
      *
      * @param player Player to join
      */
-    void join(ArenaPlayer player);
+    boolean join(ArenaPlayer player);
 
     /**
      * Invoked when the player quits
