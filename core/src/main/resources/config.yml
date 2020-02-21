@@ -52,7 +52,9 @@ Arena:
   # Default value: true
   CancelTeamDamage: true
 
-  # Whether should players be required to have an empty inventory before joining the arena
+  # Whether should players be required to have an empty inventory before joining the arena.
+  #
+  # This includes the normal inventory content, as well as the player's armor slots
   #
   # Default value: false
   RequireEmptyInventoryBeforeJoining: false
