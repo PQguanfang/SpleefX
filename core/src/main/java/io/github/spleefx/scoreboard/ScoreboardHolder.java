@@ -54,12 +54,12 @@ public class ScoreboardHolder {
         return text;
     }
 
-    public Optional<SimpleScoreboard> scoreboard(ArenaPlayer player, Map<String, Supplier<String>> placeholders) {
+    public Optional<SimpleScoreboard> scoreboard(ArenaPlayer player, Map<String, Supplier<String>> placeholders, GameArena arena) {
         if (!isEnabled()) return Optional.empty();
         SimpleScoreboard scoreboard = new SimpleScoreboard(getTitle());
 
         getText().forEach((score, text) -> {
-            text = replacePlaceholders(player, text);
+            text = replacePlaceholders(player, text, arena);
             for (String s : placeholders.keySet()) {
                 if (text.contains(s)) text = text.replace(s, String.valueOf(placeholders.get(s).get()));
             }
@@ -68,8 +68,7 @@ public class ScoreboardHolder {
         return Optional.of(scoreboard);
     }
 
-    private String replacePlaceholders(ArenaPlayer player, String message) {
-        GameArena arena = player.getCurrentArena();
+    private String replacePlaceholders(ArenaPlayer player, String message, GameArena arena) {
         BaseArenaEngine<? extends GameArena> engine = (BaseArenaEngine<? extends GameArena>) arena.getEngine();
         Location location = player.getPlayer().getLocation();
         if (arena != null) {
