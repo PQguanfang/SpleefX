@@ -218,7 +218,7 @@ public class GameExtension {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GameExtension that = (GameExtension) o;
-        return enabled == that.enabled &&
+        return
                 preventItemDropping == that.preventItemDropping &&
                 giveDroppedItems == that.giveDroppedItems &&
                 quitItemSlot == that.quitItemSlot &&
