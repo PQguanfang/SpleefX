@@ -15,7 +15,6 @@
  */
 package io.github.spleefx.util.plugin;
 
-import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.GameArena;
 import io.github.spleefx.extension.GameExtension;
 
@@ -26,7 +25,7 @@ public class ArenaSelector {
 
     private static final Comparator<GameArena> BY_COUNT = (a, b) -> Integer.compare(b.getEngine().getPlayerTeams().size(), a.getEngine().getPlayerTeams().size());
 
-    private static final Predicate<GameArena> ALLOWED_TO_JOIN = (arena) -> !arena.getEngine().isFull() && (arena.getEngine().getArenaStage() == ArenaStage.WAITING) || (arena.getEngine().getArenaStage() == ArenaStage.COUNTDOWN);
+    private static final Predicate<GameArena> ALLOWED_TO_JOIN = arena -> !arena.getEngine().isFull() && arena.getEngine().getArenaStage().isPlayable();
 
     /**
      * Picks an arena to join for the extension mode. The returned arena has the most players and is not full
@@ -40,7 +39,7 @@ public class ArenaSelector {
         return (R) GameArena.ARENAS.get()
                 .values()
                 .stream()
-                .filter(a -> (a.getExtension().equals(mode) && ALLOWED_TO_JOIN.test(a)))
+                .filter(a -> (a.getExtension().getKey().equals(mode.getKey()) && ALLOWED_TO_JOIN.test(a)))
                 .min(BY_COUNT)
                 .orElse(null);
     }
