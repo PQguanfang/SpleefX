@@ -39,6 +39,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.Permission;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -46,6 +48,8 @@ import java.util.stream.IntStream;
 
 @SuppressWarnings("unchecked")
 public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
+
+    private static final List<Character> ILLEGAL_CHARACTERS = new ArrayList<>(Arrays.asList('/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'));
 
     private static final List<String> HELP =
             Arrays.asList(
@@ -253,6 +257,11 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                                         null, -1, ex);
                                 return true;
                             }
+                            String key = args[1];
+                            if (!isValidPath(key)) {
+                                Chat.plugin(sender, "&cUnacceptable name: &e" + key + "&c.");
+                                return true;
+                            }
                             SpleefX.getPlugin().getArenaManager().add((Player) sender, arenaFactory.create(args[1], args[2], CopyStore.LOCATIONS.get(sender), ArenaType.TEAMS, ex), command.getName());
                         } catch (ClassCastException e) {
                             Chat.plugin(sender, "&cThe specified arena is not a " + type.name().replace("_", " ").toLowerCase() + " arena.");
@@ -367,7 +376,7 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                             });
                             return true;
                         case "deathlevel":
-                            parseThen(arena, sender, args[3], 1, (e, v) -> {
+                            parseThen(arena, sender, args[3], Integer.MIN_VALUE, (e, v) -> {
                                 arena.setDeathLevel(v);
                                 Chat.prefix(sender, arena, "&aArena &e" + arena.getKey() + "&a's death level has been set to &e" + v);
                             });
@@ -391,6 +400,32 @@ public class ArenaSubcommand<T extends GameArena> extends PluginSubcommand {
                 break;
         }
         return false;
+    }
+
+    /**
+     * <pre>
+     * Checks if a string is a valid path.
+     * Null safe.
+     *
+     * Calling examples:
+     *    isValidPath("c:/test");      //returns true
+     *    isValidPath("c:/te:t");      //returns false
+     *    isValidPath("c:/te?t");      //returns false
+     *    isValidPath("c/te*t");       //returns false
+     *    isValidPath("good.txt");     //returns true
+     *    isValidPath("not|good.txt"); //returns false
+     *    isValidPath("not:good.txt"); //returns false
+     * </pre>
+     */
+    private static boolean isValidPath(String path) {
+        if (ILLEGAL_CHARACTERS.stream().anyMatch(p -> path.contains(p.toString())))
+            return false;
+        try {
+            Paths.get(path);
+        } catch (InvalidPathException | NullPointerException ex) {
+            return false;
+        }
+        return true;
     }
 
     protected static void value(GameArena arena, HumanEntity entity, int e) {
