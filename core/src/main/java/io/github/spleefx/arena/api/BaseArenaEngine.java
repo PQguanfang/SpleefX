@@ -33,7 +33,6 @@ import io.github.spleefx.team.GameTeam;
 import io.github.spleefx.team.TeamColor;
 import io.github.spleefx.util.code.MapBuilder;
 import io.github.spleefx.util.game.BukkitTaskUtils;
-import io.github.spleefx.util.game.Chat;
 import io.github.spleefx.util.game.Metas;
 import io.github.spleefx.util.game.PlayerContext;
 import io.github.spleefx.util.plugin.PluginSettings;
@@ -49,6 +48,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static io.github.spleefx.compatibility.CompatibilityHandler.getProtocol;
 import static io.github.spleefx.util.plugin.PluginSettings.*;
@@ -282,8 +282,9 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
         dead.add(ArenaPlayer.adapt(p));
         SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.LOSSES, p, arena.getExtension(), 1);
         load(player);
-        playerTeams.get(player).getAlive().remove(player.getPlayer());
-        team.getAlive().remove(player.getPlayer());
+//        playerTeams.get(player).getAlive().remove(player.getPlayer());
+        if (team != null && team.getAlive() != null)
+            team.getAlive().remove(player.getPlayer());
         alive.remove(player.getPlayer());
         if (arena.getArenaType() == ArenaType.TEAMS)
             playerTeams.keySet().forEach((pz) -> MessageKey.PLAYER_LOST_T.send(pz.getPlayer(), arena, team.getColor(), null, player.getPlayer(), null, null, -1, arena.getExtension()));
@@ -302,16 +303,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void win(ArenaPlayer p, GameTeam team) {
         Player player = p.getPlayer();
         SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
-        gameTask.cancel();
-        timerTask.cancel();
-        timeLeft = arena.getGameTime() * 60;
-        load(p);
-        getPlayerTeams().keySet().forEach(pl -> {
-            Chat.sendUnprefixed(pl.getPlayer(), arena.getExtension().getChatPrefix() + team.getColor().getChatColor() + player.getName() + " &ahas won!");
-            arena.getExtension().getGameTitles().get(GameEvent.WIN).display(pl.getPlayer(), player.getName());
-        });
-        dead.add(ArenaPlayer.adapt(player)); // to give the winner rewards
-        Collections.reverse(dead);
         arena.getExtension().getRunCommandsForWinners().forEach((index, commandsToRun) -> {
             try {
                 ArenaPlayer died = dead.get(index - 1);
@@ -320,7 +311,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
             }
         });
-        end();
     }
 
     /**
@@ -487,6 +477,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     if (alive.size() == 1) {
                         ArenaPlayer p = ArenaPlayer.adapt(alive.get(0));
                         win(p, playerTeams.get(p));
+                        end();
                         return;
                     }
                 } else {
@@ -495,12 +486,28 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                         if (team.getAlive().size() == 0)
                             playerTeams.keySet().forEach(p -> MessageKey.TEAM_ELIMINATED.send(p.getPlayer(), arena, team.getColor(), null, null, null, null, -1, arena.getExtension()));
                     }));
-                    if (alive.size() == 1) {
+                    List<GameTeam> teamsLeft =
+                            arena.getGameTeams().stream().filter(team -> !team.isEliminated())
+                                    .collect(Collectors.toList());
+                    if (teamsLeft.size() == 1) {
+                        GameTeam team = teamsLeft.get(0);
+                        team.getAlive().forEach(p -> {
+                            ArenaPlayer player = ArenaPlayer.adapt(p);
+                            win(player, team);
+                        });
+                        end();
+                        return;
+                    }
+                    if (teamsLeft.isEmpty()) {
+                        draw();
+                        return;
+                    }
+/*                    if (alive.size() == 1) {
                         Player p = alive.get(0);
                         ArenaPlayer player = ArenaPlayer.adapt(p);
                         win(player, playerTeams.get(player));
                         return;
-                    }
+                    }*/
                 }
                 if (alive.size() == 0) draw();
             }, ((Integer) ARENA_UPDATE_INTERVAL.get()).longValue(), ((Integer) ARENA_UPDATE_INTERVAL.get()).longValue());

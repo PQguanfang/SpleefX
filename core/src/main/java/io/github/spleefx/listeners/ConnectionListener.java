@@ -36,7 +36,8 @@ public class ConnectionListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         ArenaPlayer player = ArenaPlayer.adapt(event.getPlayer());
         GameArena arena = player.getCurrentArena();
-        if (arena == null) return;
+        if (arena == null || arena.getEngine() == null || arena.getEngine().getPlayerTeams() == null || arena.getEngine().getPlayerTeams().isEmpty())
+            return;
         switch (player.getState()) {
             case WAITING:
                 arena.getEngine().quit(player);

@@ -53,6 +53,10 @@ public class GameTeam {
         return alive;
     }
 
+    public boolean isEliminated() {
+        return alive.size() == 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
