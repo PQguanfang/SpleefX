@@ -7,7 +7,13 @@
   "giveDroppedItems": true,
   "dropMinedBlocks": false,
   "upgradeSystemEnabled": true,
-  "runCommandsForWinners": {
+  "runCommandsForFFAWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "runCommandsForTeamsWinners": {
     "1": {
       "PLAYER": [],
       "CONSOLE": []

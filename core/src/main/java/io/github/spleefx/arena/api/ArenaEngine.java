@@ -120,8 +120,10 @@ public interface ArenaEngine {
 
     /**
      * Ends the game
+     *
+     * @param giveRewards Whether should the engine give rewards to the winners
      */
-    void end();
+    void end(boolean giveRewards);
 
     /**
      * Forcibly ends the game (used when the server is shutting down)

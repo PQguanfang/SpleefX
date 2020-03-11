@@ -12,7 +12,13 @@
     "allowThrowing": true,
     "removedAmount": 2
   },
-  "runCommandsForWinners": {
+  "runCommandsForFFAWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "runCommandsForTeamsWinners": {
     "1": {
       "PLAYER": [],
       "CONSOLE": []

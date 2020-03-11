@@ -16,6 +16,7 @@
 package io.github.spleefx.converter;
 
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import io.github.spleefx.SpleefX;
 import io.github.spleefx.arena.ArenaStage;
 import io.github.spleefx.arena.api.ArenaData;
@@ -28,7 +29,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.moltenjson.configuration.direct.DirectConfiguration;
 import org.moltenjson.json.JsonFile;
 import org.moltenjson.utils.JsonUtils;
-import org.moltenjson.utils.ReflectiveTypes;
 
 import java.io.File;
 import java.util.*;
@@ -228,16 +228,15 @@ public class LegacyExtensionConverter implements Runnable {
                 return; // Ignored file
             DirectConfiguration d = DirectConfiguration.of(JsonFile.of(file));
             StringJoiner changed = new StringJoiner(" / ").setEmptyValue("");
-            if (!d.contains("runCommandsForWinners")) { // File is already in the new form
-                Map<Integer, Map<SenderType, List<String>>> commands = new HashMap<>();
-                commands.put(1, MapBuilder.of(new HashMap<SenderType, List<String>>())
-                        .put(SenderType.PLAYER, d.get("runCommandsByWinner", ReflectiveTypes.LIST_STRING_TYPE))
-                        .put(SenderType.CONSOLE, d.get("runCommandsByConsoleForWinner", ReflectiveTypes.LIST_STRING_TYPE))
-                        .build());
+            if (!d.contains("runCommandsForFFAWinners") && d.contains("runCommandsForWinners")) { // File is already in the new form
+                Map<Integer, Map<SenderType, List<String>>> commands = d.get("runCommandsForWinners", new TypeToken<Map<Integer, Map<SenderType, List<String>>>>() {
+                }.getType());
                 d.remove("runCommandsByWinner");
                 d.remove("runCommandsByConsoleForWinner");
-                d.set("runCommandsForWinners", commands);
-                changed.add("Added rewards for other winners");
+                d.remove("runCommandsForWinners");
+                d.set("runCommandsForFFAWinners", commands);
+                d.set("runCommandsForTeamWinners", commands);
+                changed.add("Split rewards to 2 sections: FFA winners and teams winners");
             }
             if (!d.contains("scoreboard")) {
                 ScoreboardHolder sb = new ScoreboardHolder();

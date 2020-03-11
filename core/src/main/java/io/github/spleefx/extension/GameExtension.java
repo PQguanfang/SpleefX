@@ -51,7 +51,10 @@ public class GameExtension {
     private String chatPrefix; // DONE
 
     @Expose
-    private Map<Integer, Map<SenderType, List<String>>> runCommandsForWinners = Collections.emptyMap();
+    private Map<Integer, Map<SenderType, List<String>>> runCommandsForFFAWinners = Collections.emptyMap();
+
+    @Expose
+    private Map<Integer, Map<SenderType, List<String>>> runCommandsForTeamWinners = Collections.emptyMap();
 
     @Expose
     private boolean preventItemDropping = true;
@@ -137,8 +140,12 @@ public class GameExtension {
         return gameTitles;
     }
 
-    public Map<Integer, Map<SenderType, List<String>>> getRunCommandsForWinners() {
-        return runCommandsForWinners;
+    public Map<Integer, Map<SenderType, List<String>>> getRunCommandsForFFAWinners() {
+        return runCommandsForFFAWinners;
+    }
+
+    public Map<Integer, Map<SenderType, List<String>>> getRunCommandsForTeamWinners() {
+        return runCommandsForTeamWinners;
     }
 
     public List<String> getSigns() {
@@ -218,14 +225,14 @@ public class GameExtension {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GameExtension that = (GameExtension) o;
-        return
-                preventItemDropping == that.preventItemDropping &&
+        return preventItemDropping == that.preventItemDropping &&
                 giveDroppedItems == that.giveDroppedItems &&
                 quitItemSlot == that.quitItemSlot &&
                 Objects.equals(key, that.key) &&
                 Objects.equals(displayName, that.displayName) &&
                 Objects.equals(chatPrefix, that.chatPrefix) &&
-                Objects.equals(runCommandsForWinners, that.runCommandsForWinners) &&
+                Objects.equals(runCommandsForFFAWinners, that.runCommandsForFFAWinners) &&
+                Objects.equals(runCommandsForTeamWinners, that.runCommandsForTeamWinners) &&
                 Objects.equals(givePotionEffects, that.givePotionEffects) &&
                 Objects.equals(doubleJump, that.doubleJump) &&
                 Objects.equals(itemsToAdd, that.itemsToAdd) &&
@@ -247,7 +254,8 @@ public class GameExtension {
                 "enabled=" + enabled +
                 ", key='" + key + '\'' +
                 ", chatPrefix='" + chatPrefix + '\'' +
-                ", runCommandsForWinners=" + runCommandsForWinners +
+                ", runCommandsForFFAWinners=" + runCommandsForFFAWinners +
+                ", runCommandsForTeamWinners=" + runCommandsForTeamWinners +
                 ", preventItemDropping=" + preventItemDropping +
                 ", giveDroppedItems=" + giveDroppedItems +
                 ", givePotionEffects=" + givePotionEffects +
@@ -269,7 +277,7 @@ public class GameExtension {
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, key, displayName, chatPrefix, runCommandsForWinners, preventItemDropping, giveDroppedItems, givePotionEffects, doubleJump, itemsToAdd, gameTitles, signs, waitingMode, ingameMode, cancelledDamageInWaiting, cancelledDamageInGame, extensionCommands, allowedCommands, scoreboard, quitItemSlot, quitItem);
+        return Objects.hash(enabled, key, displayName, chatPrefix, runCommandsForFFAWinners, runCommandsForTeamWinners, preventItemDropping, giveDroppedItems, givePotionEffects, doubleJump, itemsToAdd, gameTitles, signs, waitingMode, ingameMode, cancelledDamageInWaiting, cancelledDamageInGame, extensionCommands, allowedCommands, scoreboard, quitItemSlot, quitItem);
     }
 
     public enum ExtensionType {

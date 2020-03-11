@@ -78,6 +78,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
 
     private List<ArenaPlayer> dead = new LinkedList<>();
 
+    private List<GameTeam> deadTeams = new LinkedList<>();
+
     /**
      * The arena that is subject to processing
      */
@@ -303,14 +305,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void win(ArenaPlayer p, GameTeam team) {
         Player player = p.getPlayer();
         SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.WINS, player, arena.getExtension(), 1);
-        arena.getExtension().getRunCommandsForWinners().forEach((index, commandsToRun) -> {
-            try {
-                ArenaPlayer died = dead.get(index - 1);
-                if (died != null)
-                    commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(died.getPlayer(), c)));
-            } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
-            }
-        });
+        if (arena.getArenaType() == ArenaType.FREE_FOR_ALL)
+            dead.add(p);
+        else
+            deadTeams.add(team);
         load(p);
     }
 
@@ -327,7 +325,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             arena.getExtension().getGameTitles().get(GameEvent.DRAW).display(p.getPlayer());
             SpleefX.getPlugin().getDataProvider().add(PlayerStatistic.DRAWS, p.getPlayer(), arena.getExtension(), 1);
         });
-        end();
+        end(false);
     }
 
     /**
@@ -478,14 +476,16 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                     if (alive.size() == 1) {
                         ArenaPlayer p = ArenaPlayer.adapt(alive.get(0));
                         win(p, playerTeams.get(p));
-                        end();
+                        end(true);
                         return;
                     }
                 } else {
                     arena.getGameTeams().forEach(team -> team.getAlive().forEach((player) -> {
                         if (player.getLocation().getY() <= arena.getDeathLevel()) lose(ArenaPlayer.adapt(player), team);
-                        if (team.getAlive().size() == 0)
+                        if (team.getAlive().size() == 0) {
                             playerTeams.keySet().forEach(p -> MessageKey.TEAM_ELIMINATED.send(p.getPlayer(), arena, team.getColor(), null, null, null, null, -1, arena.getExtension()));
+                            deadTeams.add(team);
+                        }
                     }));
                     List<GameTeam> teamsLeft =
                             arena.getGameTeams().stream().filter(team -> !team.isEliminated())
@@ -496,19 +496,13 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
                             ArenaPlayer player = ArenaPlayer.adapt(p);
                             win(player, team);
                         });
-                        end();
+                        end(true);
                         return;
                     }
                     if (teamsLeft.isEmpty()) {
                         draw();
                         return;
                     }
-/*                    if (alive.size() == 1) {
-                        Player p = alive.get(0);
-                        ArenaPlayer player = ArenaPlayer.adapt(p);
-                        win(player, playerTeams.get(player));
-                        return;
-                    }*/
                 }
                 if (alive.size() == 0) draw();
             }, ((Integer) ARENA_UPDATE_INTERVAL.get()).longValue(), ((Integer) ARENA_UPDATE_INTERVAL.get()).longValue());
@@ -520,14 +514,37 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      * Ends the game
      */
     @Override
-    public void end() {
+    public void end(boolean giveRewards) {
         endTasks.stream().filter(task -> task.getPhase() == Phase.BEFORE).forEach(GameTask::run);
         setArenaStage(ArenaStage.WAITING);
+        if (giveRewards) {
+            Collections.reverse(dead);
+            Collections.reverse(deadTeams);
+            if (arena.getArenaType() == ArenaType.FREE_FOR_ALL) {
+                arena.getExtension().getRunCommandsForFFAWinners().forEach((index, commandsToRun) -> {
+                    try {
+                        ArenaPlayer died = dead.get(index - 1);
+                        if (died != null)
+                            commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(died.getPlayer(), c)));
+                    } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
+                    }
+                });
+            } else
+                arena.getExtension().getRunCommandsForTeamWinners().forEach((index, commandsToRun) -> {
+                    try {
+                        GameTeam died = deadTeams.get(index - 1);
+                        if (died != null)
+                            died.getMembers().forEach(p -> commandsToRun.forEach((sender, commands) -> commands.forEach(c -> sender.run(p, c))));
+                    } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
+                    }
+                });
 
+        }
         playerTeams.clear();
         //playerCount.set(0);
         alive.clear();
         dead.clear();
+        deadTeams.clear();
         abilityCount.clear();
         arena.getGameTeams().forEach(team -> {
             team.getMembers().clear();
@@ -546,7 +563,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             load(p);
             MessageKey.SERVER_STOPPED.send(p.getPlayer(), arena, null, null, p.getPlayer(), null, null, -1, arena.getExtension());
         });
-        end();
+        end(false);
     }
 
     /**

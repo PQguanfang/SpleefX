@@ -6,7 +6,13 @@
   "preventItemDropping": true,
   "giveDroppedItems": true,
   "dropMinedBlocks": false,
-  "runCommandsForWinners": {
+  "runCommandsForFFAWinners": {
+    "1": {
+      "PLAYER": [],
+      "CONSOLE": []
+    }
+  },
+  "runCommandsForTeamsWinners": {
     "1": {
       "PLAYER": [],
       "CONSOLE": []
