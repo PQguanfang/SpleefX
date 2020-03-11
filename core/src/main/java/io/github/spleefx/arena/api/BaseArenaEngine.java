@@ -554,9 +554,10 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
      */
     @Override
     public void regenerate() {
+        ArenaStage oldStage = getArenaStage();
         setArenaStage(ArenaStage.REGENERATING);
         SpleefX.getPlugin().getArenaManager().regenerateArena(arena.getKey());
-        arena.stage = ArenaStage.WAITING;
+        setArenaStage(oldStage);
         getSignManager().update();
     }
 
