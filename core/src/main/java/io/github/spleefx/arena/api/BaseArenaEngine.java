@@ -312,7 +312,6 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             }
         });
         load(p);
-
     }
 
     /**
