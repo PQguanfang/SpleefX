@@ -311,6 +311,8 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
             } catch (IndexOutOfBoundsException ignored) { // Theres a reward for the 3rd place but there is no 3rd player, etc.
             }
         });
+        load(p);
+
     }
 
     /**
@@ -522,6 +524,7 @@ public abstract class BaseArenaEngine<R extends GameArena> implements ArenaEngin
     public void end() {
         endTasks.stream().filter(task -> task.getPhase() == Phase.BEFORE).forEach(GameTask::run);
         setArenaStage(ArenaStage.WAITING);
+
         playerTeams.clear();
         //playerCount.set(0);
         alive.clear();
