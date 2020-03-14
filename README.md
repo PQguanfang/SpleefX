@@ -9,3 +9,4 @@
 
 **SpleefX-PAPI**: https://github.com/SpleefX/SpleefX-PAPI
 
+![JetBrains Open Source License](https://i.imgur.com/0Hxepvj.png)](https://www.jetbrains.com/?from=SpleefX)
