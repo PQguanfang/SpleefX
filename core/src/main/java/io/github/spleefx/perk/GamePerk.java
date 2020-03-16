@@ -168,7 +168,7 @@ public class GamePerk {
         @Override
         public JsonElement serialize(List<GameExtension> src, Type typeOfSrc, JsonSerializationContext context) {
             JsonArray array = new JsonArray();
-            src.forEach(e -> array.add(e.getKey()));
+            src.forEach(e -> array.add(new JsonPrimitive(e.getKey())));
             return array;
         }
 

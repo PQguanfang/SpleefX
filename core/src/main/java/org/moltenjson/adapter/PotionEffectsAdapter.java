@@ -50,7 +50,7 @@ public class PotionEffectsAdapter implements JsonSerializer<List<PotionEffect>>,
     @Override
     public JsonElement serialize(List<PotionEffect> src, Type typeOfSrc, JsonSerializationContext context) {
         JsonArray array = new JsonArray();
-        src.forEach((p) -> array.add(p.getType().getName() + ":" + p.getDuration() + ":" + p.getAmplifier()));
+        src.forEach((p) -> array.add(new JsonPrimitive(p.getType().getName() + ":" + p.getDuration() + ":" + p.getAmplifier())));
         return array;
     }
 
