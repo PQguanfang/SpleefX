@@ -16,13 +16,12 @@
 package io.github.spleefx.arena.custom;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.JsonAdapter;
 import io.github.spleefx.arena.ModeType;
 import io.github.spleefx.arena.SimpleArenaEngine;
 import io.github.spleefx.arena.api.ArenaType;
 import io.github.spleefx.arena.api.GameArena;
+import io.github.spleefx.extension.ExtensionsManager;
 import io.github.spleefx.extension.GameExtension;
-import io.github.spleefx.extension.GameExtension.StringAdapter;
 import org.bukkit.Location;
 
 /**
@@ -31,8 +30,9 @@ import org.bukkit.Location;
 public class ExtensionArena extends GameArena {
 
     @Expose
-    @JsonAdapter(StringAdapter.class)
-    private GameExtension extension;
+    private String extension;
+
+    private GameExtension gameExtension;
 
     /**
      * Creates a new spleef arena
@@ -43,7 +43,7 @@ public class ExtensionArena extends GameArena {
      */
     public ExtensionArena(String key, String displayName, Location regenerationPoint, GameExtension extension, ArenaType type) {
         super(key, displayName, regenerationPoint, type);
-        this.extension = extension;
+        this.extension = extension.getKey();
         post();
     }
 
@@ -52,6 +52,11 @@ public class ExtensionArena extends GameArena {
         super.post();
         this.type = ModeType.CUSTOM;
         setEngine(new SimpleArenaEngine<>(this));
-        setExtension(extension);
+        setExtension(getExtension());
+    }
+
+    @Override
+    public GameExtension getExtension() {
+        return gameExtension == null ? gameExtension = ExtensionsManager.getByKey(extension) : gameExtension;
     }
 }
